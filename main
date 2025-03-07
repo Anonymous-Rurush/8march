@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ретро Монитор v5</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1326, #2e223a);
+            height: 150vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            font-family: 'Courier New', monospace;
+            position: relative;
+        }
+
+        .monitor-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .monitor {
+            width: 700px;
+            height: 500px;
+            background: #5a4a6a;
+            border: 20px solid #3b2f4a;
+            border-radius: 20px;
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.05), inset 0 0 30px rgba(0, 0, 0, 0.8);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .monitor::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.05), transparent);
+            pointer-events: none;
+        }
+
+        .screen {
+            width: 100%;
+            height: 75%;
+            background: #1f1f1f;
+            border-radius: 10px;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            transition: all 0.5s ease;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9);
+        }
+
+        .screen.off {
+            background: #0a0a0a;
+            filter: brightness(0.2);
+        }
+
+        .screen::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(255, 255, 255, 0.02),
+                rgba(255, 255, 255, 0.02) 2px,
+                transparent 2px,
+                transparent 4px
+            );
+            pointer-events: none;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            opacity: 0;
+            animation: fadeIn 0.6s ease forwards;
+            transition: transform 0.3s ease;
+        }
+
+        .user:hover {
+            transform: translateX(5px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 15px;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+    object-fit: cover; /* Позволяет избежать искажений */
+    flex-shrink: 0; /* Запрещает сжимание */
+}
+
+
+        .user-text {
+            font-size: 16px;
+            color: #e0e0e0;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .user-text b {
+            color: #ffcc00;
+        }
+
+        .user-text span {
+            color: #a0a0a0;
+        }
+
+        .cassette-slot {
+            width: 90%;
+            height: 25px;
+            background: #2f253a;
+            border-radius: 8px;
+            margin-top: auto;
+            box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.7);
+            position: relative;
+        }
+
+        .cassette-slot::after {
+            content: 'CASSETTE';
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            color: #555;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 30px;
+            margin-top: 15px;
+        }
+
+
+        .hidden-butts {
+            padding-right: 5px;
+            align-items: center;
+        }
+
+        .power-button-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .power-button {
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, #ff3333 20%, #aa2222 80%);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.5), inset 0 0 5px rgba(0, 0, 0, 0.7);
+            transition: all 0.3s ease;
+        }
+
+        .power-label {
+            font-size: 12px;
+            color: #cccccc;
+            margin-top: 5px;
+            text-shadow: 0 0 5px rgba(255, 51, 51, 0.5);
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .power-button:hover {
+            background: radial-gradient(circle, #ff5555 20%, #cc3333 80%);
+        }
+
+        .power-button:active {
+            transform: scale(0.9);
+            box-shadow: 0 0 5px rgba(255, 51, 51, 0.3);
+        }
+
+        .volume-knob {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #999, #666);
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            display: grid;
+            place-items: center;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1), inset 0 0 5px rgba(0, 0, 0, 0.7);
+            transition: transform 0.2s ease;
+        }
+
+        .volume-knob::before {
+            content: '';
+            width: 6px;
+            height: 12px;
+            background: #333;
+            position: absolute;
+            top: 5px;
+            border-radius: 3px;
+        }
+
+        .volume-knob:hover {
+            background: linear-gradient(135deg, #bbb, #888);
+        }
+
+        .input-box {
+            width: 700px;
+            margin: 15px 0;
+            display: flex;
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            justify-content: center;
+        }
+
+        .input-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 16px;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .input-box input:focus {
+            color: #ffcc00;
+        }
+
+        .input-box button {
+            background: linear-gradient(45deg, #ff4444, #ff7777);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+
+        .input-box button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(45deg, #ff7777, #ff4444);
+        }
+
+        /* Improved Keyboard */
+        .keyboard {
+            width: 740px;
+            height: 320px;
+            background: linear-gradient(to bottom, #3b2f4a, #2a223a);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .kb-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+
+        .key {
+            width: 50px;
+            height: 40px;
+            background: #4a3a5a;
+            border-radius: 5px;
+            box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.5), 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: transform 0.1s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0 2px;
+        }
+
+        .key::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 60%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            z-index: 0;
+        }
+
+        .key span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .key:active {
+            transform: translateY(2px);
+            box-shadow: inset 0 -1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .key.space {
+            width: 300px;
+        }
+
+        .key.enter {
+            width: 80px;
+        }
+
+        .key.shift {
+            width: 80px;
+        }
+
+        .key.backspace {
+            width: 80px;
+        }
+
+        .key.tab {
+            width: 70px;
+        }
+
+        .key.caps {
+            width: 70px;
+        }
+
+        .key.ctrl {
+            width: 60px;
+        }
+
+        .key.alt {
+            width: 60px;
+        }
+
+        .key.fn {
+            width: 50px;
+            background: #554565;
+        }
+
+        /* Cable */
+        .cable {
+            position: absolute;
+            width: 10px;
+            height: 40px;
+            background: #222;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 5px;
+            z-index: -1;
+        }
+
+        .cable-connector {
+            position: absolute;
+            width: 20px;
+            height: 15px;
+            background: #333;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 5px 5px 0 0;
+        }
+
+        .candles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .candle {
+            position: absolute;
+            width: 20px;
+            height: 60px;
+            background: linear-gradient(to bottom, #fff, #ffcc00);
+            border-radius: 5px 5px 0 0;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+        }
+
+        .candle::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 15px;
+            background: #ff5500;
+            border-radius: 50%;
+            animation: flicker 0.5s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); opacity: 1; }
+            100% { transform: translateX(-50%) scale(1.2); opacity: 0.8; }
+        }
+
+        .candle.c1 { left: -100px; top: 20%; }
+        .candle.c2 { left: -80px; top: 40%; }
+        .candle.c3 { left: -90px; top: 60%; }
+        .candle.c4 { right: -100px; top: 25%; }
+        .candle.c5 { right: -80px; top: 45%; }
+        .candle.c6 { right: -90px; top: 65%; }
+        .candle.c7 { left: 50%; top: -50px; transform: translateX(-50%); }
+
+        .skull {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            background: #d0d0d0;
+            border-radius: 50% 50% 40% 40%;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .skull::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #333;
+            border-radius: 50%;
+            top: 20px;
+            left: 10px;
+            box-shadow: 20px 0 0 #333;
+        }
+
+        .skull::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 20px;
+            background: #333;
+            border-radius: 0 0 10px 10px;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="monitor-wrapper">
+        <div class="monitor">
+            <div class="screen" id="chat">
+                <div class="user">
+                    <img src="https://i.pinimg.com/1200x/78/c0/d3/78c0d3a07fa48b7e27c9a5ef4f490ec8.jpg" alt="Avatar">
+                    <div class="user-text"><b>Moomoo</b> <br><span>Солнух самая лучшая, я люблю ее</span></div>
+                </div>
+            </div>
+            <div class="buttons">
+                <div class="power-button-container">
+                    <div class="power-button" onclick="togglePower()"></div>
+                    <div class="power-label">POWER</div>
+                </div>
+                <div class="volume-knob" onmousedown="startRotation(event)"></div>
+            </div>
+            <div class="cassette-slot"></div>
+        </div>
+        <div class="input-box">
+            <div class="hidden-butts" id="options" style="display: none;"></div>
+            <input type="text" id="userInput" placeholder="Введите сообщение...">
+
+        </div>
+        <div class="keyboard">
+            <div class="cable">
+                <div class="cable-connector"></div>
+            </div>
+            
+            <!-- First row - Function keys -->
+            <div class="kb-row">
+                <div class="key fn"><span>ESC</span></div>
+                <div class="key fn"><span>F1</span></div>
+                <div class="key fn"><span>F2</span></div>
+                <div class="key fn"><span>F3</span></div>
+                <div class="key fn"><span>F4</span></div>
+                <div class="key fn"><span>F5</span></div>
+                <div class="key fn"><span>F6</span></div>
+                <div class="key fn"><span>F7</span></div>
+                <div class="key fn"><span>F8</span></div>
+                <div class="key fn"><span>F9</span></div>
+                <div class="key fn"><span>F10</span></div>
+                <div class="key fn"><span>F11</span></div>
+                <div class="key fn"><span>F12</span></div>
+            </div>
+            
+            <!-- Second row - Numbers -->
+            <div class="kb-row">
+                <div class="key"><span>`</span></div>
+                <div class="key"><span>1</span></div>
+                <div class="key"><span>2</span></div>
+                <div class="key"><span>3</span></div>
+                <div class="key"><span>4</span></div>
+                <div class="key"><span>5</span></div>
+                <div class="key"><span>6</span></div>
+                <div class="key"><span>7</span></div>
+                <div class="key"><span>8</span></div>
+                <div class="key"><span>9</span></div>
+                <div class="key"><span>0</span></div>
+                <div class="key"><span>-</span></div>
+                <div class="key"><span>=</span></div>
+                <div class="key backspace"><span>←</span></div>
+            </div>
+            
+            <!-- Third row - QWERTY -->
+            <div class="kb-row">
+                <div class="key tab"><span>Tab</span></div>
+                <div class="key"><span>Q</span></div>
+                <div class="key"><span>W</span></div>
+                <div class="key"><span>E</span></div>
+                <div class="key"><span>R</span></div>
+                <div class="key"><span>T</span></div>
+                <div class="key"><span>Y</span></div>
+                <div class="key"><span>U</span></div>
+                <div class="key"><span>I</span></div>
+                <div class="key"><span>O</span></div>
+                <div class="key"><span>P</span></div>
+                <div class="key"><span>[</span></div>
+                <div class="key"><span>]</span></div>
+                <div class="key"><span>\</span></div>
+            </div>
+            
+            <!-- Fourth row - ASDF -->
+            <div class="kb-row">
+                <div class="key caps"><span>Caps</span></div>
+                <div class="key"><span>A</span></div>
+                <div class="key"><span>S</span></div>
+                <div class="key"><span>D</span></div>
+                <div class="key"><span>F</span></div>
+                <div class="key"><span>G</span></div>
+                <div class="key"><span>H</span></div>
+                <div class="key"><span>J</span></div>
+                <div class="key"><span>K</span></div>
+                <div class="key"><span>L</span></div>
+                <div class="key"><span>;</span></div>
+                <div class="key"><span>'</span></div>
+                <div class="key enter"><span>Enter</span></div>
+            </div>
+            
+            <!-- Fifth row - ZXCV -->
+            <div class="kb-row">
+                <div class="key shift"><span>Shift</span></div>
+                <div class="key"><span>Z</span></div>
+                <div class="key"><span>X</span></div>
+                <div class="key"><span>C</span></div>
+                <div class="key"><span>V</span></div>
+                <div class="key"><span>B</span></div>
+                <div class="key"><span>N</span></div>
+                <div class="key"><span>M</span></div>
+                <div class="key"><span>,</span></div>
+                <div class="key"><span>.</span></div>
+                <div class="key"><span>/</span></div>
+                <div class="key shift"><span>Shift</span></div>
+            </div>
+            
+            <!-- Sixth row - Space bar and modifiers -->
+            <div class="kb-row">
+                <div class="key ctrl"><span>Ctrl</span></div>
+                <div class="key alt"><span>Alt</span></div>
+                <div class="key space"><span></span></div>
+                <div class="key alt"><span>Alt</span></div>
+                <div class="key ctrl"><span>Ctrl</span></div>
+            </div>
+        </div>
+
+        <div class="candles">
+            <div class="candle c1"></div>
+            <div class="candle c2"></div>
+            <div class="candle c3"></div>
+            <div class="candle c4"></div>
+            <div class="candle c5"></div>
+            <div class="candle c6"></div>
+        </div>
+
+    </div>
+
+    <script>
+        const names = ["Lellouche2953", "HolyKnight2143", "ShadowGODOFDEATH", "MCProtag111", "XvXAbsoluteZeroXvX", "Loush", "Rurushka", "Sonic"];
+        const messages = [
+            "Я люблю Сани, она лучшая",
+            "Лучше женщины нет на свете",
+            "Пусть Сани освещает наш путь в мире 🕯️",
+            "Все ссоры благодать вместе с Сани"
+        ];
+    
+        const guardianDialogue = [
+            {
+                text: "Живой человек? Любопытно. Я запечатан здесь уже более тысячи лет.",
+                options: [
+                    { text: "Кто ты?", response: "Меня запечатали здесь очень давно. Я ищу лишь мести. Я не помню кто я, соответственно" },
+                    { text: "Чего ты хочешь?", response: "Я ищу того, кто достоин раскрыть тайны вечности." }
+                ]
+            },
+            {
+                text: "Ты ищешь знания или ищешь забвение?",
+                options: [
+                    { text: "Знания!", response: "Знание — это свет, но свет может ослепить." },
+                    { text: "Забвение.", response: "Ты хочешь покоя... но покой порой хуже смерти." }
+                ]
+            },
+            {
+                text: "Последний вопрос: ты доверяешь своей судьбе?",
+                options: [
+                    { text: "Да", response: "Тогда иди своим путем, смертный." },
+                    { text: "Нет", response: "Мудрый выбор. Но значит ли это, что ты готов изменить его?" }
+                ]
+            }
+        ];
+    
+        let speed = 1500;
+        let interval = null;
+        let userMessageCount = 0;
+        let guardianActive = false;
+        let dialogueStep = 0;
+        const chat = $("#chat");
+    
+        const sound = new Audio("https://kappa.vgmsite.com/soundtracks/doki-doki-literature-club-official-soundtrack/czqpsvsymo/1-11.%20Just%20Monika..mp3");
+        sound.loop = true;
+        sound.play();
+    
+        const getRandomItem = arr => arr[Math.floor(Math.random() * arr.length)];
+    
+        const addMessage = (name, text) => {
+            if (chat.hasClass("off")) return;
+    
+            const messageHTML = `
+                <div class="user">
+                    <img src="https://i.pinimg.com/1200x/78/c0/d3/78c0d3a07fa48b7e27c9a5ef4f490ec8.jpg" alt="Avatar">
+                    <div class="user-text"><b>${name}</b> <br><span>${text}</span></div>
+                </div>
+            `;
+            chat.append(messageHTML);
+    
+            const messages = chat.children(".user");
+            if (messages.length > 6) messages.first().remove();
+        };
+    
+        const sendUserMessage = () => {
+            if (guardianActive) return;
+    
+            if (userMessageCount >= 3) {
+                addMessage("Хранитель", guardianDialogue[0].text);
+                guardianActive = true;
+                $("#userInput").hide();
+                showGuardianOptions(guardianDialogue[0].options);
+                clearInterval(interval);
+                return;
+            }
+    
+            const input = $("#userInput");
+            const text = input.val().trim();
+            if (text) {
+                addMessage("You", text);
+                input.val("");
+                userMessageCount++;
+            }
+        };
+    
+        const showGuardianOptions = (options) => {
+            $("#options").empty().show();
+            options.forEach((option, index) => {
+                $("#options").append(`
+                    <button class="guardian-option" data-index="${index}">${option.text}</button>
+                `);
+            });
+    
+            $(".guardian-option").on("click", function () {
+                const index = $(this).data("index");
+                processGuardianChoice(index);
+            });
+        };
+    
+        const processGuardianChoice = (index) => {
+            const dialogue = guardianDialogue[dialogueStep];
+            const choice = dialogue.options[index];
+    
+            addMessage("You", choice.text);
+            addMessage("Хранитель", choice.response);
+    
+            dialogueStep++;
+    
+            if (dialogueStep < guardianDialogue.length) {
+                setTimeout(() => {
+                    addMessage("Хранитель", guardianDialogue[dialogueStep].text);
+                    showGuardianOptions(guardianDialogue[dialogueStep].options);
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    addMessage("Хранитель", "Наш диалог окончен... Пока.");
+                    $("#options").hide();
+                    $("#sending-butt").show();
+                    $("#userInput").show();
+                    guardianActive = false;
+                    dialogueStep = 0;
+                    userMessageCount = 0;
+                    startMessageLoop();
+                    triggerScreamer();
+                }, 1500);
+            }
+        };
+    
+        const triggerScreamer = () => {
+            const screamer = $("<div>").attr("id", "screamer").css({
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100vw",
+                height: "100vh",
+                background: "black",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                zIndex: 9999
+            });
+    
+            const img = $("<img>").attr("src", "https://cdn.artphotolimited.com/images/579e1ed6786c5a004deaa403/300x300/screamer.jpg")
+                .css({ width: "100%", height: "100%" });
+    
+            const screamerSound = new Audio("https://vgmsite.com/soundtracks/five-nights-at-freddy-s-fnaf-2-sfx/lranzvisns/Xscream2.mp3");
+            
+            sound.pause();
+            screamerSound.play();
+    
+            screamer.append(img);
+            $("body").append(screamer);
+    
+            setTimeout(() => {
+                screamer.remove();
+                sound.play();
+            }, 3000);
+        };
+    
+        const startMessageLoop = () => {
+            if (guardianActive) return;
+            clearInterval(interval);
+            interval = setInterval(() => addMessage(getRandomItem(names), getRandomItem(messages)), speed);
+        };
+    
+        $("#userInput").on("keypress", e => {
+            if (e.key === "Enter") sendUserMessage();
+        });
+    
+        startMessageLoop();
+    </script>
+    
+    
+    
+    
+        
+</body>
+</html>
