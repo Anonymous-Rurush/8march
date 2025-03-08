@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Храм Сани</title>
+    <title>Ретро Монитор v5</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         * {
@@ -19,7 +19,6 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-
             font-family: 'Courier New', monospace;
             position: relative;
         }
@@ -56,6 +55,43 @@
             height: 100%;
             background: radial-gradient(circle, rgba(255, 255, 255, 0.05), transparent);
             pointer-events: none;
+        }
+
+        .pinned-photo {
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 120px;
+            height: 160px;
+            background: url('https://sun9-43.userapi.com/impg/lG4qgd6YuAQ1SSVt8MslT_VR7TZAzVxLFzLzJw/5lZwoTGPUPs.jpg?size=1496x1496&quality=96&sign=06e708c160034f3189fbfbe8219023ff&type=album') no-repeat center/cover; /* Замените ссылку на своё фото */
+            border: 5px solid #ffffff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transform: rotate(-5deg);
+            z-index: 10;
+        }
+
+        .pinned-photo::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            background: #888;
+            border-radius: 50%;
+            box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.8), 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .pinned-photo::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 15px;
+            background: #666;
         }
 
         .screen {
@@ -114,15 +150,14 @@
         }
 
         .user img {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    margin-right: 15px;
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
-    object-fit: cover;
-    flex-shrink: 0;
-}
-
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            margin-right: 15px;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+            object-fit: cover;
+            flex-shrink: 0;
+        }
 
         .user-text {
             font-size: 16px;
@@ -166,7 +201,6 @@
             padding: 0 30px;
             margin-top: 15px;
         }
-
 
         .hidden-butts {
             padding-right: 5px;
@@ -277,7 +311,6 @@
             background: linear-gradient(45deg, #ff7777, #ff4444);
         }
 
-        /* Improved Keyboard */
         .keyboard {
             width: 740px;
             height: 320px;
@@ -374,7 +407,6 @@
             background: #554565;
         }
 
-        /* Cable */
         .cable {
             position: absolute;
             width: 10px;
@@ -438,47 +470,11 @@
         .candle.c4 { right: -100px; top: 25%; }
         .candle.c5 { right: -80px; top: 45%; }
         .candle.c6 { right: -90px; top: 65%; }
-        .candle.c7 { left: 50%; top: -50px; transform: translateX(-50%); }
-
-        .skull {
-            position: absolute;
-            width: 60px;
-            height: 80px;
-            background: #d0d0d0;
-            border-radius: 50% 50% 40% 40%;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .skull::before {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: #333;
-            border-radius: 50%;
-            top: 20px;
-            left: 10px;
-            box-shadow: 20px 0 0 #333;
-        }
-
-        .skull::after {
-            content: '';
-            position: absolute;
-            width: 30px;
-            height: 20px;
-            background: #333;
-            border-radius: 0 0 10px 10px;
-            top: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
     </style>
 </head>
 <body>
     <div class="monitor-wrapper">
+        <div class="pinned-photo"></div> 
         <div class="monitor">
             <div class="screen" id="chat">
                 <div class="user">
@@ -498,14 +494,11 @@
         <div class="input-box">
             <div class="hidden-butts" id="options" style="display: none;"></div>
             <input type="text" id="userInput" placeholder="Введите сообщение...">
-
         </div>
         <div class="keyboard">
             <div class="cable">
                 <div class="cable-connector"></div>
             </div>
-            
-            <!-- First row - Function keys -->
             <div class="kb-row">
                 <div class="key fn"><span>ESC</span></div>
                 <div class="key fn"><span>F1</span></div>
@@ -521,8 +514,6 @@
                 <div class="key fn"><span>F11</span></div>
                 <div class="key fn"><span>F12</span></div>
             </div>
-            
-            <!-- Second row - Numbers -->
             <div class="kb-row">
                 <div class="key"><span>`</span></div>
                 <div class="key"><span>1</span></div>
@@ -539,8 +530,6 @@
                 <div class="key"><span>=</span></div>
                 <div class="key backspace"><span>←</span></div>
             </div>
-            
-            <!-- Third row - QWERTY -->
             <div class="kb-row">
                 <div class="key tab"><span>Tab</span></div>
                 <div class="key"><span>Q</span></div>
@@ -557,8 +546,6 @@
                 <div class="key"><span>]</span></div>
                 <div class="key"><span>\</span></div>
             </div>
-            
-            <!-- Fourth row - ASDF -->
             <div class="kb-row">
                 <div class="key caps"><span>Caps</span></div>
                 <div class="key"><span>A</span></div>
@@ -574,8 +561,6 @@
                 <div class="key"><span>'</span></div>
                 <div class="key enter"><span>Enter</span></div>
             </div>
-            
-            <!-- Fifth row - ZXCV -->
             <div class="kb-row">
                 <div class="key shift"><span>Shift</span></div>
                 <div class="key"><span>Z</span></div>
@@ -590,8 +575,6 @@
                 <div class="key"><span>/</span></div>
                 <div class="key shift"><span>Shift</span></div>
             </div>
-            
-            <!-- Sixth row - Space bar and modifiers -->
             <div class="kb-row">
                 <div class="key ctrl"><span>Ctrl</span></div>
                 <div class="key alt"><span>Alt</span></div>
@@ -600,7 +583,6 @@
                 <div class="key ctrl"><span>Ctrl</span></div>
             </div>
         </div>
-
         <div class="candles">
             <div class="candle c1"></div>
             <div class="candle c2"></div>
@@ -609,238 +591,230 @@
             <div class="candle c5"></div>
             <div class="candle c6"></div>
         </div>
-
     </div>
 
- <script>
-    const names = ["Lellouche2953", "HolyKnight2143", "ShadowGODOFDEATH", "MCProtag111", "XvXAbsoluteZeroXvX", "Loush", "Rurushka", "Sonic"];
-    const messages = [
-        "Я люблю Сани, она лучшая",
-        "Лучше женщины нет на свете",
-        "Пусть Сани освещает наш путь в мире 🕯️",
-        "Все ссоры благодать вместе с Сани"
-    ];
-
-    const guardianDialogue = [
-        {
-            text: "Живой человек? Любопытно. Я запечатан здесь уже более тысячи лет.",
-            options: [
-                { text: "Кто ты?", response: "Меня запечатали здесь очень давно. Я ищу лишь мести. Я не помню кто я, соответственно" },
-                { text: "Чего ты хочешь?", response: "Я ищу того, кто достоин раскрыть тайны вечности." }
-            ]
-        },
-        {
-            text: "Ты ищешь знания или ищешь забвение?",
-            options: [
-                { text: "Знания!", response: "Знание — это свет, но свет может ослепить." },
-                { text: "Забвение.", response: "Ты хочешь покоя... но покой порой хуже смерти." }
-            ]
-        },
-        {
-            text: "Последний вопрос: ты доверяешь своей судьбе?",
-            options: [
-                { text: "Да", response: "Тогда иди своим путем, смертный." },
-                { text: "Нет", response: "Мудрый выбор. Но значит ли это, что ты готов изменить его?" }
-            ]
-        }
-    ];
-
-    let speed = 1500;
-    let interval = null;
-    let userMessageCount = 0;
-    let guardianActive = false;
-    let dialogueStep = 0;
-    const chat = $("#chat");
-    let isPowerOn = true; // Состояние питания
-
-    const sound = new Audio("https://kappa.vgmsite.com/soundtracks/doki-doki-literature-club-official-soundtrack/czqpsvsymo/1-11.%20Just%20Monika..mp3");
-    sound.loop = true; // Зацикливание музыки
-    sound.volume = 0.5; // Начальная громкость
-    sound.autoplay = true; // Автоматический запуск (хотя может быть заблокирован браузером)
-    sound.play().catch(err => console.log("Автозапуск заблокирован браузером:", err)); // Запуск с обработкой ошибок
-
-    const getRandomItem = arr => arr[Math.floor(Math.random() * arr.length)];
-
-    const addMessage = (name, text) => {
-        if (chat.hasClass("off")) return;
-
-        const messageHTML = `
-            <div class="user">
-                <img src="https://i.pinimg.com/1200x/78/c0/d3/78c0d3a07fa48b7e27c9a5ef4f490ec8.jpg" alt="Avatar">
-                <div class="user-text"><b>${name}</b> <br><span>${text}</span></div>
-            </div>
-        `;
-        chat.append(messageHTML);
-
-        const messages = chat.children(".user");
-        if (messages.length > 6) messages.first().remove();
-    };
-
-    const sendUserMessage = () => {
-        if (guardianActive) return;
-
-        if (userMessageCount >= 3) {
-            addMessage("Хранитель", guardianDialogue[0].text);
-            guardianActive = true;
-            $("#userInput").hide();
-            showGuardianOptions(guardianDialogue[0].options);
-            clearInterval(interval);
-            return;
-        }
-
-        const input = $("#userInput");
-        const text = input.val().trim();
-        if (text) {
-            addMessage("You", text);
-            input.val("");
-            userMessageCount++;
-        }
-    };
-
-    const showGuardianOptions = (options) => {
-        $("#options").empty().show();
-        options.forEach((option, index) => {
-            $("#options").append(`
-                <button class="guardian-option" data-index="${index}">${option.text}</button>
-            `);
-        });
-
-        $(".guardian-option").on("click", function () {
-            const index = $(this).data("index");
-            processGuardianChoice(index);
-        });
-    };
-
-    const processGuardianChoice = (index) => {
-        const dialogue = guardianDialogue[dialogueStep];
-        const choice = dialogue.options[index];
-
-        addMessage("You", choice.text);
-        addMessage("Хранитель", choice.response);
-
-        dialogueStep++;
-
-        if (dialogueStep < guardianDialogue.length) {
-            setTimeout(() => {
-                addMessage("Хранитель", guardianDialogue[dialogueStep].text);
-                showGuardianOptions(guardianDialogue[dialogueStep].options);
-            }, 1000);
-        } else {
-            setTimeout(() => {
-                addMessage("Хранитель", "Наш диалог окончен... Пока.");
-                $("#options").hide();
-                $("#userInput").show();
-                guardianActive = false;
-                dialogueStep = 0;
-                userMessageCount = 0;
-                startMessageLoop();
-                triggerScreamer();
-            }, 1500);
-        }
-    };
-
-    const triggerScreamer = () => {
-        const screamer = $("<div>").attr("id", "screamer").css({
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "black",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 9999
-        });
-
-        const img = $("<img>").attr("src", "https://cdn.artphotolimited.com/images/579e1ed6786c5a004deaa403/300x300/screamer.jpg")
-            .css({ width: "100%", height: "100%" });
-
-        const screamerSound = new Audio("https://vgmsite.com/soundtracks/five-nights-at-freddy-s-fnaf-2-sfx/lranzvisns/Xscream2.mp3");
-
-        screamerSound.play();
-
-        screamer.append(img);
-        $("body").append(screamer);
-
-        setTimeout(() => {
-            screamer.remove();
-        }, 3000);
-    };
-
-    const startMessageLoop = () => {
-        if (guardianActive || !isPowerOn) return;
-        clearInterval(interval);
-        interval = setInterval(() => addMessage(getRandomItem(names), getRandomItem(messages)), speed);
-    };
-
-    // Функция для кнопки питания
-    window.togglePower = () => {
-        isPowerOn = !isPowerOn;
-        if (isPowerOn) {
-            chat.removeClass("off");
-            sound.play();
-            startMessageLoop();
-        } else {
-            chat.addClass("off");
+    <script>
+        const names = ["Lellouche2953", "HolyKnight2143", "ShadowGODOFDEATH", "MCProtag111", "XvXAbsoluteZeroXvX", "Loush", "Rurushka", "Sonic"];
+        const messages = [
+            "Я люблю Сани, она лучшая",
+            "Лучше женщины нет на свете",
+            "Пусть Сани освещает наш путь в мире 🕯️",
+            "Все ссоры благодать вместе с Сани"
+        ];
+    
+        const guardianDialogue = [
+            {
+                text: "Живой человек? Любопытно. Я запечатан здесь уже более тысячи лет.",
+                options: [
+                    { text: "Кто ты?", response: "Меня запечатали здесь очень давно. Я ищу лишь мести. Я не помню кто я, соответственно" },
+                    { text: "Чего ты хочешь?", response: "Я ищу того, кто достоин раскрыть тайны вечности." }
+                ]
+            },
+            {
+                text: "Ты ищешь знания или ищешь забвение?",
+                options: [
+                    { text: "Знания!", response: "Знание — это свет, но свет может ослепить." },
+                    { text: "Забвение.", response: "Ты хочешь покоя... но покой порой хуже смерти." }
+                ]
+            },
+            {
+                text: "Последний вопрос: ты доверяешь своей судьбе?",
+                options: [
+                    { text: "Да", response: "Тогда иди своим путем, смертный." },
+                    { text: "Нет", response: "Мудрый выбор. Но значит ли это, что ты готов изменить его?" }
+                ]
+            }
+        ];
+    
+        let speed = 1500;
+        let interval = null;
+        let userMessageCount = 0;
+        let guardianActive = false;
+        let dialogueStep = 0;
+        const chat = $("#chat");
+        let isPowerOn = true;
+    
+        const sound = new Audio("https://kappa.vgmsite.com/soundtracks/doki-doki-literature-club-official-soundtrack/czqpsvsymo/1-11.%20Just%20Monika..mp3");
+        sound.loop = true;
+        sound.volume = 0.5;
+        sound.play();
+    
+        const getRandomItem = arr => arr[Math.floor(Math.random() * arr.length)];
+    
+        const addMessage = (name, text) => {
+            if (chat.hasClass("off")) return;
+    
+            const messageHTML = `
+                <div class="user">
+                    <img src="https://i.pinimg.com/1200x/78/c0/d3/78c0d3a07fa48b7e27c9a5ef4f490ec8.jpg" alt="Avatar">
+                    <div class="user-text"><b>${name}</b> <br><span>${text}</span></div>
+                </div>
+            `;
+            chat.append(messageHTML);
+    
+            const messages = chat.children(".user");
+            if (messages.length > 6) messages.first().remove();
+        };
+    
+        const sendUserMessage = () => {
+            if (guardianActive) return;
+    
+            if (userMessageCount >= 3) {
+                addMessage("Хранитель", guardianDialogue[0].text);
+                guardianActive = true;
+                $("#userInput").hide();
+                showGuardianOptions(guardianDialogue[0].options);
+                clearInterval(interval);
+                return;
+            }
+    
+            const input = $("#userInput");
+            const text = input.val().trim();
+            if (text) {
+                addMessage("You", text);
+                input.val("");
+                userMessageCount++;
+            }
+        };
+    
+        const showGuardianOptions = (options) => {
+            $("#options").empty().show();
+            options.forEach((option, index) => {
+                $("#options").append(`
+                    <button class="guardian-option" data-index="${index}">${option.text}</button>
+                `);
+            });
+    
+            $(".guardian-option").on("click", function () {
+                const index = $(this).data("index");
+                processGuardianChoice(index);
+            });
+        };
+    
+        const processGuardianChoice = (index) => {
+            const dialogue = guardianDialogue[dialogueStep];
+            const choice = dialogue.options[index];
+    
+            addMessage("You", choice.text);
+            addMessage("Хранитель", choice.response);
+    
+            dialogueStep++;
+    
+            if (dialogueStep < guardianDialogue.length) {
+                setTimeout(() => {
+                    addMessage("Хранитель", guardianDialogue[dialogueStep].text);
+                    showGuardianOptions(guardianDialogue[dialogueStep].options);
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    addMessage("Хранитель", "Наш диалог окончен... Пока.");
+                    $("#options").hide();
+                    $("#userInput").show();
+                    guardianActive = false;
+                    dialogueStep = 0;
+                    userMessageCount = 0;
+                    startMessageLoop();
+                    triggerScreamer();
+                }, 1500);
+            }
+        };
+    
+        const triggerScreamer = () => {
+            const screamer = $("<div>").attr("id", "screamer").css({
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100vw",
+                height: "100vh",
+                background: "black",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                zIndex: 9999
+            });
+    
+            const img = $("<img>").attr("src", "https://cdn.artphotolimited.com/images/579e1ed6786c5a004deaa403/300x300/screamer.jpg")
+                .css({ width: "100%", height: "100%" });
+    
+            const screamerSound = new Audio("https://vgmsite.com/soundtracks/five-nights-at-freddy-s-fnaf-2-sfx/lranzvisns/Xscream2.mp3");
+    
             sound.pause();
+            screamerSound.play();
+    
+            screamer.append(img);
+            $("body").append(screamer);
+    
+            setTimeout(() => {
+                screamer.remove();
+                sound.play();
+            }, 3000);
+        };
+    
+        const startMessageLoop = () => {
+            if (guardianActive || !isPowerOn) return;
             clearInterval(interval);
-        }
-    };
-
-    // Функция для регулятора громкости
-    let isRotating = false;
-    window.startRotation = (event) => {
-        isRotating = true;
-        const knob = $(".volume-knob");
-        let lastX = event.clientX;
-
-        const onMouseMove = (e) => {
-            if (!isRotating) return;
-            const deltaX = e.clientX - lastX;
-            let newVolume = sound.volume + deltaX * 0.01;
-            newVolume = Math.max(0, Math.min(1, newVolume)); // Ограничение от 0 до 1
-            sound.volume = newVolume;
-            knob.css("transform", `rotate(${newVolume * 360}deg)`);
-            lastX = e.clientX;
+            interval = setInterval(() => addMessage(getRandomItem(names), getRandomItem(messages)), speed);
         };
-
-        const onMouseUp = () => {
-            isRotating = false;
-            $(document).off("mousemove", onMouseMove);
-            $(document).off("mouseup", onMouseUp);
+    
+        window.togglePower = () => {
+            isPowerOn = !isPowerOn;
+            if (isPowerOn) {
+                chat.removeClass("off");
+                sound.play();
+                startMessageLoop();
+            } else {
+                chat.addClass("off");
+                sound.pause();
+                clearInterval(interval);
+            }
         };
-
-        $(document).on("mousemove", onMouseMove);
-        $(document).on("mouseup", onMouseUp);
-    };
-
-    // Логика для экранной клавиатуры
-    $(".key").on("click", function () {
-        const input = $("#userInput");
-        const keyValue = $(this).find("span").text();
-
-        if (keyValue === "Enter") {
-            sendUserMessage();
-        } else if (keyValue === "←") {
-            input.val(input.val().slice(0, -1)); // Backspace
-        } else if (keyValue === "Space" || keyValue === "") {
-            input.val(input.val() + " "); // Пробел
-        } else if (keyValue.length === 1) { // Одиночные символы
-            input.val(input.val() + keyValue);
-        }
-    });
-
-    $("#userInput").on("keypress", e => {
-        if (e.key === "Enter") sendUserMessage();
-    });
-
-    startMessageLoop();
-</script>
     
+        let isRotating = false;
+        window.startRotation = (event) => {
+            isRotating = true;
+            const knob = $(".volume-knob");
+            let lastX = event.clientX;
     
+            const onMouseMove = (e) => {
+                if (!isRotating) return;
+                const deltaX = e.clientX - lastX;
+                let newVolume = sound.volume + deltaX * 0.01;
+                newVolume = Math.max(0, Math.min(1, newVolume));
+                sound.volume = newVolume;
+                knob.css("transform", `rotate(${newVolume * 360}deg)`);
+                lastX = e.clientX;
+            };
     
+            const onMouseUp = () => {
+                isRotating = false;
+                $(document).off("mousemove", onMouseMove);
+                $(document).off("mouseup", onMouseUp);
+            };
     
-        
+            $(document).on("mousemove", onMouseMove);
+            $(document).on("mouseup", onMouseUp);
+        };
+    
+        $(".key").on("click", function () {
+            const input = $("#userInput");
+            const keyValue = $(this).find("span").text();
+    
+            if (keyValue === "Enter") {
+                sendUserMessage();
+            } else if (keyValue === "←") {
+                input.val(input.val().slice(0, -1));
+            } else if (keyValue === "Space" || keyValue === "") {
+                input.val(input.val() + " ");
+            } else if (keyValue.length === 1) {
+                input.val(input.val() + keyValue);
+            }
+        });
+    
+        $("#userInput").on("keypress", e => {
+            if (e.key === "Enter") sendUserMessage();
+        });
+    
+        startMessageLoop();
+    </script>
 </body>
 </html>
